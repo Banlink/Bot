@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "@typeit/discord": "^5.0.13",
+    "discord.js": "github:discordjs/discord.js",
+    "dotenv": "^10.0.0",
+    "path": "^0.12.7",
+    "reflect-metadata": "^0.1.13"
+  }
+}
