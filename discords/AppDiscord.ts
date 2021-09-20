@@ -7,18 +7,17 @@ import {CommandInteraction} from "discord.js";
     "testing",
     "TESTING LOL",
     {
-        text: "swag"
+        tests: "swag"
     }
 )
-
 export abstract class AppDiscord {
     @Slash("Ping")
-    @Group("text")
-    Ping(
-        @Option("text")
+    @Group("tests")
+    ping(
+        @Option("AAAAAAAAA")
         text: string,
         interaction: CommandInteraction
     ) {
-        interaction.reply("SWAG");
+        interaction.reply(text);
     }
 }
