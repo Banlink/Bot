@@ -1,48 +1,34 @@
-import {Client} from "@typeit/discord"
-import {config} from "dotenv"
-import {resolve} from "path"
-import {Intents} from "discord.js";
 import "reflect-metadata";
+import path from "path";
+import { Intents, Interaction, Message } from "discord.js";
+import { Client } from "discordx";
 
+const client = new Client({
+  prefix: "!",
+  intents: [
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Intents.FLAGS.GUILD_VOICE_STATES,
+  ],
+  classes: [
+    path.join(__dirname, "commands", "**/*.{ts,js}"),
+    path.join(__dirname, "events", "**/*.{ts,js}"),
+  ],
+  botGuilds: [process.env.GUILD_ID ?? ""],
+  silent: true,
+});
 
-config({path: resolve(__dirname, "../../.env")})
+client.on("ready", () => {
+  client.initApplicationCommands({ log: { forGuild: true, forGlobal: true } });
+});
 
+client.on("interactionCreate", (interaction: Interaction) => {
+  client.executeInteraction(interaction);
+});
 
-export class Main {
-    private static _client: Client;
+client.on("messageCreate", (message: Message) => {
+  client.executeCommand(message);
+});
 
-    static get Client(): Client {
-        return this._client;
-    }
-
-    static async start() {
-        this._client = new Client({
-            intents: [
-                Intents.FLAGS.GUILD_INTEGRATIONS,
-                Intents.FLAGS.GUILDS,
-                Intents.FLAGS.GUILD_MESSAGES
-            ],
-            slashGuilds: ["796334983542341632"],
-            requiredByDefault: true
-        });
-
-        await this._client.login(process.env.BOT_TOKEN!,
-            `${__dirname}/../discords/*.ts`,
-            `${__dirname}/../discords/*.js`)
-        
-        console.log(`${__dirname}/discords/*.js`);
-
-        this._client.once("ready", async () => {
-            await this._client.clearSlashes();
-            await this._client.initSlashes();
-
-            console.log("Bot is now running :D");
-        });
-
-        this._client.on("interaction", (interaction) => {
-            this._client.executeSlash(interaction);
-        });
-    }
-}
-
-Main.start();
+client.login(process.env.BOT_TOKEN ?? ""); // provide your bot token
