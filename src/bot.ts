@@ -14,7 +14,7 @@ export class Main {
 
     static start() {
         this._client = new Client();
-        this._client.login(process.env.BOT_TOKEN,
+        this._client.login(process.env.BOT_TOKEN!,
             `${__dirname}/discords/*.ts`,
             `           ${__dirname}/discords/*.js`)
     }
