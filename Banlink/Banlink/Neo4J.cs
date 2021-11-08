@@ -4,7 +4,7 @@ using Neo4j.Driver;
 
 namespace Banlink
 {
-    public class Neo4J : IDisposable
+    public sealed class Neo4J : IDisposable
     {
         private bool _disposed = false;
         private readonly IDriver _driver;
@@ -120,7 +120,7 @@ DETACH DELETE s";
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_disposed)
                 return;
