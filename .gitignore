@@ -144,3 +144,8 @@ dist
 # build folder
 
 build/
+Banlink/Banlink/obj/**
+Banlink/Banlink/config.toml
+Banlink/Banlink/bin/**
+**/**/**/Release
+Banlink/Banlink/bin/Release/net5.0/Banlink.exe
