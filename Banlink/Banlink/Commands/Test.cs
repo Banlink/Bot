@@ -36,13 +36,9 @@ namespace Banlink.Commands
             var driver = new Neo4J(config.DbUri, config.Username, config.Password);
             var nodes = await driver.GetAllNodeDirectionallyFromGivenNode(rootNodeId);
             var message = $"Total nodes: {nodes.Count}\n";
-            foreach (IRecord node in nodes)
-            {
-                foreach (var value in node.Values)
-                {
-                    message += ($"{value.Value.As<INode>().Properties.GetValueOrDefault("id")}\n");
-                }
-            }
+            message = nodes.SelectMany(node => node.Values)
+                .Aggregate(message, (current, value) => 
+                    current + ($"{value.Value.As<INode>().Properties.GetValueOrDefault("id")}\n"));
 
             await ctx.RespondAsync(message);
         }

@@ -11,13 +11,12 @@ namespace Banlink
 {
     internal static class Banlink
     {
-        public static string Time { get; set; }
+        public static string Time { get; private set; }
 
         private static async Task Main()
         {
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             var config = Configuration.ReadConfig("config.toml");
-            Console.WriteLine(config.Token);
             MainAsync(config).GetAwaiter().GetResult();
         }
 
