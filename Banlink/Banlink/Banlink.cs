@@ -5,6 +5,7 @@ using Banlink.Utilities;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
 
 namespace Banlink
@@ -28,7 +29,8 @@ namespace Banlink
                 Token = config.Token,
                 TokenType = TokenType.Bot,
                 AutoReconnect = true,
-                MinimumLogLevel = LogLevel.Information
+                MinimumLogLevel = LogLevel.Information,
+                Intents = DiscordIntents.All
             });
 
             var commandConfig = new CommandsNextConfiguration
@@ -38,7 +40,7 @@ namespace Banlink
             };
 
             var commands = client.UseCommandsNext(commandConfig);
-
+            
             // Register the commands
             commands.RegisterCommands<Test>();
 

@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Banlink.Utilities;
-using Colorful;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using Neo4j.Driver;
 
 namespace Banlink.Commands
 {
-    public class Test : BaseCommandModule
+    public abstract class Test : BaseCommandModule
     {
         [Command("createlink")]
         public async Task CreateLink(CommandContext ctx, string serverId1, string serverId2)
