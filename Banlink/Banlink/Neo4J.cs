@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Neo4j.Driver;
 
@@ -6,14 +7,23 @@ namespace Banlink
 {
     public sealed class Neo4J : IDisposable
     {
-        private bool _disposed = false;
         private readonly IDriver _driver;
-
-        ~Neo4J() => Dispose(false);
+        private bool _disposed;
 
         public Neo4J(string uri, string user, string password)
         {
             _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~Neo4J()
+        {
+            Dispose(false);
         }
 
         public async Task DeleteNodeAndRelationshipsToNode(string serverId)
@@ -26,10 +36,35 @@ DETACH DELETE s";
             var session = _driver.AsyncSession();
             try
             {
-                await session.WriteTransactionAsync(async tx =>
+                await session.WriteTransactionAsync(async tx => { await tx.RunAsync(query, new {id = serverId}); });
+            }
+            catch (Neo4jException ex)
+            {
+                Console.WriteLine($"{query} - {ex}");
+                throw;
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
+        public async Task<List<IRecord>> GetAllNodeDirectionallyFromGivenNode(string rootNodeId)
+        {
+            const string query = @"
+MATCH (from:Server {id:$rootNodeId})
+CALL apoc.path.subgraphNodes(from, {labelFilter:'Server',relationshipFilter:'>'}) YIELD node
+return node";
+
+            var session = _driver.AsyncSession();
+            try
+            {
+                var nodes = await session.ReadTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync(query, new {id = serverId});
+                    var result = await tx.RunAsync(query, new {rootNodeId});
+                    return await result.ToListAsync();
                 });
+                return nodes;
             }
             catch (Neo4jException ex)
             {
@@ -46,7 +81,7 @@ DETACH DELETE s";
         {
             // To learn more about the Cypher syntax, see https://neo4j.com/docs/cypher-manual/current/
             // The Reference Card is also a good resource for keywords https://neo4j.com/docs/cypher-refcard/current/
-            var query = @"
+            const string query = @"
         MERGE (s1:Server { id: $serverId1 })
         MERGE (s2:Server { id: $serverId2 })
         MERGE (s1)-[:LINKED_TO]->(s2)
@@ -59,7 +94,7 @@ DETACH DELETE s";
                 var writeResults = await session.WriteTransactionAsync(async tx =>
                 {
                     var result = await tx.RunAsync(query, new {serverId1, serverId2});
-                    return (await result.ToListAsync());
+                    return await result.ToListAsync();
                 });
 
                 foreach (var result in writeResults)
@@ -83,7 +118,7 @@ DETACH DELETE s";
 
         public async Task FindServer(string id)
         {
-            var query = @"
+            const string query = @"
         MATCH (s:Server)
         WHERE s.id = $id
         RETURN s.id";
@@ -93,14 +128,11 @@ DETACH DELETE s";
             {
                 var readResults = await session.ReadTransactionAsync(async tx =>
                 {
-                    var result = await tx.RunAsync(query, new {id = id});
-                    return (await result.ToListAsync());
+                    var result = await tx.RunAsync(query, new {id});
+                    return await result.ToListAsync();
                 });
 
-                foreach (var result in readResults)
-                {
-                    Console.WriteLine($"Found server: {result["s.id"].As<String>()}");
-                }
+                foreach (var result in readResults) Console.WriteLine($"Found server: {result["s.id"].As<string>()}");
             }
             // Capture any errors along with the query and data for traceability
             catch (Neo4jException ex)
@@ -114,21 +146,12 @@ DETACH DELETE s";
             }
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         private void Dispose(bool disposing)
         {
             if (_disposed)
                 return;
 
-            if (disposing)
-            {
-                _driver?.Dispose();
-            }
+            if (disposing) _driver?.Dispose();
 
             _disposed = true;
         }

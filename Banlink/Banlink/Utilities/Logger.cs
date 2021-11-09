@@ -43,9 +43,7 @@ namespace Banlink.Utilities
         public static void LogToFile(string message)
         {
             if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "logs")))
-            {
                 Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "logs"));
-            }
 
             var file = File.AppendText($"logs\\log-{Banlink.Time}.txt");
             file.WriteLine($"[{DateTime.Now}] {message}");

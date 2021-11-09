@@ -12,6 +12,7 @@ namespace Banlink
     internal static class Banlink
     {
         public static string Time { get; set; }
+
         private static async Task Main()
         {
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
@@ -19,7 +20,7 @@ namespace Banlink
             Console.WriteLine(config.Token);
             MainAsync(config).GetAwaiter().GetResult();
         }
-        
+
         private static async Task MainAsync(Configuration.Config config)
         {
             // Create the Discord client
@@ -34,20 +35,19 @@ namespace Banlink
             var commandConfig = new CommandsNextConfiguration
             {
                 StringPrefixes = new[] {config.Prefix},
-                EnableDms = false,
-
+                EnableDms = false
             };
 
             var commands = client.UseCommandsNext(commandConfig);
-            
+
             // Register the commands
             commands.RegisterCommands<Test>();
 
             // Login and connect
             await client.ConnectAsync();
             await Task.Delay(3000); // short delay for it connect or it gets mad
-            
-            Logger.Log(Logger.LogLevel.Info, $"Bot successfully logged in as " +
+
+            Logger.Log(Logger.LogLevel.Info, "Bot successfully logged in as " +
                                              $"{client.CurrentUser.Username}#{client.CurrentUser.Discriminator}, " +
                                              $"Ping: {client.Ping}");
 

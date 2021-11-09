@@ -1,7 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Banlink.Utilities;
+using Colorful;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
+using Neo4j.Driver;
 
 namespace Banlink.Commands
 {
@@ -23,6 +27,24 @@ namespace Banlink.Commands
             var driver = new Neo4J(config.DbUri, config.Username, config.Password);
             await driver.DeleteNodeAndRelationshipsToNode(serverId);
             await ctx.RespondAsync($"Detached and deleted node {serverId}");
+        }
+
+        [Command("getnodes")]
+        public async Task GetNodes(CommandContext ctx, string rootNodeId)
+        {
+            var config = Configuration.ReadConfig("config.toml");
+            var driver = new Neo4J(config.DbUri, config.Username, config.Password);
+            var nodes = await driver.GetAllNodeDirectionallyFromGivenNode(rootNodeId);
+            var message = $"Total nodes: {nodes.Count}\n";
+            foreach (IRecord node in nodes)
+            {
+                foreach (var value in node.Values)
+                {
+                    message += ($"{value.Value.As<INode>().Properties.GetValueOrDefault("id")}\n");
+                }
+            }
+
+            await ctx.RespondAsync(message);
         }
     }
 }
