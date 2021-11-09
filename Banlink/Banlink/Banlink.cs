@@ -14,7 +14,7 @@ namespace Banlink
     {
         public static string Time { get; private set; }
 
-        private static async Task Main()
+        private static void Main()
         {
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             var config = Configuration.ReadConfig("config.toml");
@@ -46,7 +46,7 @@ namespace Banlink
 
             // Login and connect
             await client.ConnectAsync();
-            await Task.Delay(3000); // short delay for it connect or it gets mad
+            await Task.Delay(2000); // short delay for it connect or it gets mad
 
             Logger.Log(Logger.LogLevel.Info, "Bot successfully logged in as " +
                                              $"{client.CurrentUser.Username}#{client.CurrentUser.Discriminator}, " +
