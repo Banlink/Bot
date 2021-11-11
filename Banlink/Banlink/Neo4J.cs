@@ -50,7 +50,7 @@ DETACH DELETE s";
             }
         }
 
-        public async Task UnlinkServer(string serverid1, string serverid2)
+        public async Task UnlinkServer(string serverId1, string serverid2)
         {
             const string query = @"MATCH (:Server {id: $serverid1})-[r:LINKED_TO]->(:Server {id: $serverid2})
             DELETE r";
@@ -60,7 +60,7 @@ DETACH DELETE s";
             {
                 await session.WriteTransactionAsync(async tx =>
                 {
-                    await tx.RunAsync(query, new {serverid1, serverid2});
+                    await tx.RunAsync(query, new {serverid1 = serverId1, serverid2});
                 });
             }
             catch (Neo4jException ex)
