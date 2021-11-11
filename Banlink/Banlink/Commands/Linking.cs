@@ -49,7 +49,8 @@ namespace Banlink.Commands
 
         [Command("unlink")]
         [RequirePermissions(Permissions.ManageGuild)]
-        [Description("Unlink current server from a given server")]
+        [Description("Unlink the server this command was ran in from a given server ID. " +
+                     "You must be previously linked for this to work.")]
         public async Task Unlink(CommandContext ctx, string serverId)
         {
             if (serverId.Length != 18)
@@ -64,6 +65,8 @@ namespace Banlink.Commands
             }
             var config = Configuration.ReadConfig("config.toml");
             var driver = new Neo4J(config.DbUri, config.Username, config.Password);
+            await driver.UnlinkServer(serverId, ctx.Guild.Id.ToString());
+            await ctx.RespondAsync("Successfully unlinked!");
         }
     }
 }
