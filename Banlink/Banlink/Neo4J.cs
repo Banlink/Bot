@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Banlink.Utilities;
 using Neo4j.Driver;
 
 namespace Banlink
@@ -96,19 +97,12 @@ return node";
                     var result = await tx.RunAsync(query, new {serverId1, serverId2});
                     return await result.ToListAsync();
                 });
-
-                foreach (var result in writeResults)
-                {
-                    var server1 = result["s1"].As<INode>().Properties["id"];
-                    var server2 = result["s2"].As<INode>().Properties["id"];
-                    Console.WriteLine($"Created friendship between: {serverId1}, {serverId2}");
-                }
             }
             // Capture any errors along with the query and data for traceability
             catch (Neo4jException ex)
             {
                 Console.WriteLine($"{query} - {ex}");
-                throw;
+                Logger.Log(Logger.LogLevel.Fatal, $"Fatal error while creating link!\n{query}\n{ex}");
             }
             finally
             {

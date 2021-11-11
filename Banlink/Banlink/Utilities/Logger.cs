@@ -40,7 +40,7 @@ namespace Banlink.Utilities
             }
         }
 
-        public static void LogToFile(string message)
+        private static void LogToFile(string message)
         {
             if (!Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "logs")))
                 Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), "logs"));

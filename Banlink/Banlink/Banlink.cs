@@ -5,7 +5,6 @@ using Banlink.Utilities;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
-using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
 
 namespace Banlink
@@ -13,6 +12,7 @@ namespace Banlink
     internal static class Banlink
     {
         public static string Time { get; private set; }
+        public static DiscordClient Client;
 
         private static void Main()
         {
@@ -24,13 +24,13 @@ namespace Banlink
         private static async Task MainAsync(Configuration.Config config)
         {
             // Create the Discord client
-            var client = new DiscordClient(new DiscordConfiguration
+            Client = new DiscordClient(new DiscordConfiguration
             {
                 Token = config.Token,
                 TokenType = TokenType.Bot,
                 AutoReconnect = true,
                 MinimumLogLevel = LogLevel.Information,
-                Intents = DiscordIntents.All
+                Intents = DiscordIntents.AllUnprivileged
             });
 
             var commandConfig = new CommandsNextConfiguration
@@ -39,20 +39,20 @@ namespace Banlink
                 EnableDms = false
             };
 
-            var commands = client.UseCommandsNext(commandConfig);
+            var commands = Client.UseCommandsNext(commandConfig);
             
             // Register the commands
-            commands.RegisterCommands<Test>();
+            commands.RegisterCommands<ServerLinking>();
 
             // Login and connect
-            await client.ConnectAsync();
+            await Client.ConnectAsync();
             await Task.Delay(2000); // short delay for it connect or it gets mad
 
             Logger.Log(Logger.LogLevel.Info, "Bot successfully logged in as " +
-                                             $"{client.CurrentUser.Username}#{client.CurrentUser.Discriminator}, " +
-                                             $"Ping: {client.Ping}");
+                                             $"{Client.CurrentUser.Username}#{Client.CurrentUser.Discriminator}, " +
+                                             $"Ping: {Client.Ping}");
 
-            await client.UpdateStatusAsync(new DiscordActivity
+            await Client.UpdateStatusAsync(new DiscordActivity
             {
                 Name = $"{config.Prefix}help",
                 ActivityType = ActivityType.Custom
