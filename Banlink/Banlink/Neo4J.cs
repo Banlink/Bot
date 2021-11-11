@@ -50,6 +50,30 @@ DETACH DELETE s";
             }
         }
 
+        public async Task UnlinkServer(string serverid1, string serverid2)
+        {
+            const string query = @"MATCH (:Server {id: $serverid1})-[r:LINKED_TO]->(:Server {id: $serverid2})
+            DELETE r";
+            
+            var session = _driver.AsyncSession();
+            try
+            {
+                await session.WriteTransactionAsync(async tx =>
+                {
+                    await tx.RunAsync(query, new {serverid1, serverid2});
+                });
+            }
+            catch (Neo4jException ex)
+            {
+                Console.WriteLine($"{query} - {ex}");
+                throw;
+            }
+            finally
+            {
+                await session.CloseAsync();
+            }
+        }
+
         public async Task<List<IRecord>> GetAllNodeDirectionallyFromGivenNode(string rootNodeId)
         {
             const string query = @"
