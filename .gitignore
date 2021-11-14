@@ -150,3 +150,7 @@ Banlink/Banlink/bin/**
 **/**/**/Release
 Banlink/Banlink/bin/Release/net5.0/Banlink.exe
 Banlink/Banlink.sln.DotSettings.user
+Banlink/.vs/Banlink/v17/.suo
+Banlink/.vs/Banlink/v17/.futdcache.v1
+Banlink/.vs/Banlink/project-colors.json
+Banlink/.vs/Banlink/DesignTimeBuild/.dtbcache.v2
