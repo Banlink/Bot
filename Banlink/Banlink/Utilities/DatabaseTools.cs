@@ -11,7 +11,7 @@ namespace Banlink.Utilities
         {
             _connection = new SQLiteConnection(location);
         }
-
+    
         public void Dispose()
         {
             Dispose(true);

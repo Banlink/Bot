@@ -1,6 +1,6 @@
 ﻿namespace Banlink.Utilities
 {
-    public class ServerUtilities
+    public static class ServerUtilities
     {
         public static bool IsInServer(string serverId)
         {

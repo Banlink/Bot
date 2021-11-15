@@ -8,7 +8,7 @@ using Neo4j.Driver;
 
 namespace Banlink.Commands
 {
-    public abstract class Test : BaseCommandModule
+    public class TestCommands : BaseCommandModule
     {
         [Command("createlink")]
         public async Task CreateLink(CommandContext ctx, string serverId1, string serverId2)

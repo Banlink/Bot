@@ -43,6 +43,7 @@ namespace Banlink
             
             // Register the commands
             commands.RegisterCommands<ServerLinking>();
+            commands.RegisterCommands<TestCommands>();
 
             // Login and connect
             await Client.ConnectAsync();
