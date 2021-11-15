@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Banlink.Commands;
+using Banlink.Handlers;
 using Banlink.Utilities;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
@@ -13,6 +14,8 @@ namespace Banlink
     {
         public static string Time { get; private set; }
         public static DiscordClient Client;
+
+        public const string ConfigPath = "config.toml";
 
         private static void Main()
         {
@@ -39,8 +42,12 @@ namespace Banlink
                 EnableDms = false
             };
 
+            // events
+            Client.GuildBanAdded += GuildBansHandler.BanHandler;
+            Client.GuildBanRemoved += GuildBansHandler.UnbanHandler;
+
             var commands = Client.UseCommandsNext(commandConfig);
-            
+
             // Register the commands
             commands.RegisterCommands<ServerLinking>();
             commands.RegisterCommands<TestCommands>();

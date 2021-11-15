@@ -74,7 +74,7 @@ DETACH DELETE s";
             }
         }
 
-        public async Task<List<IRecord>> GetAllNodeDirectionallyFromGivenNode(string rootNodeId)
+        public async Task<List<IRecord>> GetAllNodesDirectionallyFromGivenNode(string rootNodeId)
         {
             const string query = @"
 MATCH (from:Server {id:$rootNodeId})

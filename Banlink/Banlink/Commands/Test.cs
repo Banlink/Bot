@@ -33,7 +33,7 @@ namespace Banlink.Commands
         {
             var config = Configuration.ReadConfig("config.toml");
             var driver = new Neo4J(config.DbUri, config.Username, config.Password);
-            var nodes = await driver.GetAllNodeDirectionallyFromGivenNode(rootNodeId);
+            var nodes = await driver.GetAllNodesDirectionallyFromGivenNode(rootNodeId);
             var message = $"Total nodes: {nodes.Count}\n";
             message = nodes.SelectMany(node => node.Values)
                 .Aggregate(message, (current, value) => 

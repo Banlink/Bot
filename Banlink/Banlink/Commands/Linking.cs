@@ -30,7 +30,7 @@ namespace Banlink.Commands
                 await ctx.RespondAsync("You can't link a server to itself.");
                 return;
             }
-            if (server1 .Length != 18 || server2.Length != 18)
+            if (server1.Length != 18 || server2.Length != 18)
             {
                 await ctx.RespondAsync("Server IDs must be 18 characters long.");
                 return;
