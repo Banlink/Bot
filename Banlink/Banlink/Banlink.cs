@@ -20,6 +20,7 @@ namespace Banlink
 
         private static void Main()
         {
+            Console.WriteLine(Assembly.GetCallingAssembly().Location);
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             var config = Configuration.ReadConfig("config.toml");
             MainAsync(config).GetAwaiter().GetResult();
@@ -27,8 +28,6 @@ namespace Banlink
 
         private static async Task MainAsync(Configuration.Config config)
         {
-            Console.WriteLine(Assembly.GetCallingAssembly().Location);
-            
             // Create the Discord client
             Client = new DiscordClient(new DiscordConfiguration
             {
