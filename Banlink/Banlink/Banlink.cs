@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Banlink.Commands;
 using Banlink.Handlers;
@@ -26,6 +27,8 @@ namespace Banlink
 
         private static async Task MainAsync(Configuration.Config config)
         {
+            Console.WriteLine(Assembly.GetCallingAssembly().Location);
+            
             // Create the Discord client
             Client = new DiscordClient(new DiscordConfiguration
             {
