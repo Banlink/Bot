@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Banlink.Commands;
 using Banlink.Handlers;
@@ -20,7 +22,12 @@ namespace Banlink
 
         private static void Main()
         {
-            Console.WriteLine(Assembly.GetCallingAssembly().Location);
+            if (!File.Exists(ConfigPath))
+            {
+                Console.WriteLine("No config file located! You have one minute to add it...");
+                Console.WriteLine(Assembly.GetCallingAssembly().Location);
+                Thread.Sleep(60000);
+            }
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             var config = Configuration.ReadConfig("config.toml");
             MainAsync(config).GetAwaiter().GetResult();
