@@ -15,4 +15,5 @@ RUN dotnet publish "Banlink.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY config.toml /app/
 ENTRYPOINT ["dotnet", "Banlink.dll"]

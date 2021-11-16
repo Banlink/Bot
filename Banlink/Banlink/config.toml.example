@@ -1,0 +1,8 @@
+﻿[neo4j]
+ConnectionURL = "bolt://server.ip.address:port"
+Username = "db username"
+Password = "db password"
+
+[bot]
+Prefix = "bot prefix"
+Token = "bot token"

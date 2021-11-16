@@ -28,7 +28,8 @@ namespace Banlink.Handlers
                 {
                     var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
                     await BanUserIdFromServer(client, bannedMemberId, serverId, 
-                        $"Banned due to Banlink link with server. Server name {args.Guild.Name} - ID: {guildId}");
+                        $"Banned due to Banlink link with server. " +
+                        $"\nServer name {args.Guild.Name} - ID: {guildId}");
                 }
             }
         }
@@ -72,7 +73,8 @@ namespace Banlink.Handlers
                     var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
                     Console.WriteLine(serverId);
                     await UnbanUserIdFromServer(client, unbannedMemberId, serverId, 
-                        $"Unbanned due to Banlink link with server. Server name {args.Guild.Name} - ID: {guildId}");
+                        $"Unbanned due to Banlink link with server. " +
+                        $"\nServer name {args.Guild.Name} - ID: {guildId}");
                 }
             }
         }
