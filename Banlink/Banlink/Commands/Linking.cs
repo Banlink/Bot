@@ -10,13 +10,29 @@ namespace Banlink.Commands
     {
         [Command("link")]
         [RequirePermissions(Permissions.ManageGuild)]
-        [Description("Enter a valid link code to automatically link a server's bans to the current server." +
-                     "The can only be used once before it gets automatically deleted. Generate a new one to link more servers.")]
+        [Description("Enter a valid link code to automatically link a server's bans to the current server. " +
+                     "Generate a code with the 'generate' command. This overwrites your previous code, if you had one.")]
         public async Task Link(CommandContext ctx, string linkCode)
         {
             // TODO: Check if the link code is valid, if it is, link the bans, if not, tell the user it's invalid.
             // TODO: Additionally, check if the link code was already used, if it was, tell the user it's invalid.
             // TODO: You should be able to get server id's from the link code, and then link the bans.
+        }
+
+        [Command("generate")]
+        [RequirePermissions(Permissions.ManageGuild)]
+        [Description("Generates a link code for the current server which you can use with the 'link' command in another server.")]
+        public async Task GenerateLinkCode(CommandContext ctx)
+        {
+            /*
+             * Generate link code for current server which can be used to link servers together
+             */
+            await ctx.TriggerTypingAsync();
+            var linkCode = ServerUtilities.GenerateLinkCode(ctx.Guild.Id.ToString());
+            var config = Configuration.ReadConfig(Banlink.ConfigPath);
+            var driver = new Neo4J(config.DbUri, config.Username, config.Password);
+            await driver.AssignLinkCodeToServerNode(ctx.Guild.Id.ToString(), linkCode);
+            await ctx.RespondAsync($"Here is your link code: `{linkCode}`");
         }
 
         [Command("forcelink")]

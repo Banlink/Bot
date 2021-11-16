@@ -27,6 +27,22 @@ namespace Banlink
             Dispose(false);
         }
 
+        public async Task AssignLinkCodeToServerNode(string serverId, string linkCode)
+        {
+            var session = _driver.AsyncSession();
+            if (!ServerUtilities.IsInServer(serverId))
+            {
+                return;
+            }
+            {
+                await session.WriteTransactionAsync(tx => tx.RunAsync("MATCH (n:Server {id: $id}) SET n.linkCode = $linkCode", new Dictionary<string, object>
+                {
+                    {"id", serverId},
+                    {"linkCode", linkCode}
+                }));
+            }
+        }
+
         public async Task DeleteNodeAndRelationshipsToNode(string serverId)
         {
             var query = @"
@@ -134,12 +150,12 @@ return node";
             }
         }
 
-        public async Task FindServer(string id)
+        public async Task<INode> FindServer(string id)
         {
             const string query = @"
         MATCH (s:Server)
         WHERE s.id = $id
-        RETURN s.id";
+        RETURN s";
 
             var session = _driver.AsyncSession();
             try
@@ -150,7 +166,8 @@ return node";
                     return await result.ToListAsync();
                 });
 
-                foreach (var result in readResults) Console.WriteLine($"Found server: {result["s.id"].As<string>()}");
+                var node = readResults[0].As<INode>();
+                return node;
             }
             // Capture any errors along with the query and data for traceability
             catch (Neo4jException ex)
