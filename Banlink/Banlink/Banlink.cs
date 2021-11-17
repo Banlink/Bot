@@ -22,6 +22,7 @@ namespace Banlink
 
         private static void Main()
         {
+            ServerLinking.GetDriver();
             if (!File.Exists(ConfigPath))
             {
                 Console.WriteLine("No config file located! You have one minute to add it...");

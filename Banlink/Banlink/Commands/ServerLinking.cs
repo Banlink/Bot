@@ -8,6 +8,13 @@ namespace Banlink.Commands
 {
     public class ServerLinking : BaseCommandModule
     {
+        private static Neo4J _driver;
+        public static void GetDriver()
+        {
+            var config = Configuration.ReadConfig(Banlink.ConfigPath);
+            _driver = new Neo4J(config.DbUri, config.Username, config.Password);
+        }
+        
         [Command("link")]
         [RequirePermissions(Permissions.ManageGuild)]
         [Description("Enter a valid link code to automatically link a server's bans to the current server. " +
@@ -17,6 +24,21 @@ namespace Banlink.Commands
             // TODO: Check if the link code is valid, if it is, link the bans, if not, tell the user it's invalid.
             // TODO: Additionally, check if the link code was already used, if it was, tell the user it's invalid.
             // TODO: You should be able to get server id's from the link code, and then link the bans.
+            await ctx.TriggerTypingAsync();
+            if (linkCode.Length != 27)
+            {
+                await ctx.RespondAsync("Invalid link code.");
+                return;
+            }
+            var id = await _driver.ValidateLinkCodeAndLinkServer(linkCode, ctx.Guild.Id.ToString());
+            if (id != "error")
+            {
+                await ctx.RespondAsync($"Successfully linked this server to `{id}`!");
+            }
+            else
+            {
+                await ctx.RespondAsync("Invalid link code, or something went wrong!");
+            }
         }
 
         [Command("generate")]
@@ -29,9 +51,7 @@ namespace Banlink.Commands
              */
             await ctx.TriggerTypingAsync();
             var linkCode = ServerUtilities.GenerateLinkCode(ctx.Guild.Id.ToString());
-            var config = Configuration.ReadConfig(Banlink.ConfigPath);
-            var driver = new Neo4J(config.DbUri, config.Username, config.Password);
-            await driver.AssignLinkCodeToServerNode(ctx.Guild.Id.ToString(), linkCode);
+            await _driver.AssignLinkCodeToServerNode(ctx.Guild.Id.ToString(), linkCode);
             await ctx.RespondAsync($"Here is your link code: `{linkCode}`");
         }
 
@@ -57,9 +77,7 @@ namespace Banlink.Commands
                 await ctx.RespondAsync("One of the given servers does not have the bot added!");
                 return;
             }
-            var config = Configuration.ReadConfig("config.toml");
-            var driver = new Neo4J(config.DbUri, config.Username, config.Password);
-            await driver.CreateServerLink(server1, server2);
+            await _driver.CreateServerLink(server1, server2);
             await ctx.RespondAsync($"Created link {server1}-[:LINKED_TO]->{server2}");
         }
 
@@ -79,9 +97,7 @@ namespace Banlink.Commands
                 await ctx.RespondAsync("The given server does not have the bot added!");
                 return;
             }
-            var config = Configuration.ReadConfig("config.toml");
-            var driver = new Neo4J(config.DbUri, config.Username, config.Password);
-            await driver.UnlinkServer(serverId, ctx.Guild.Id.ToString());
+            await _driver.UnlinkServer(serverId, ctx.Guild.Id.ToString());
             await ctx.RespondAsync("Successfully unlinked!");
         }
     }

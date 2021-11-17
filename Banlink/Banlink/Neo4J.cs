@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Banlink.Utilities;
 using Neo4j.Driver;
@@ -25,6 +26,33 @@ namespace Banlink
         ~Neo4J()
         {
             Dispose(false);
+        }
+
+        public async Task<string> ValidateLinkCodeAndLinkServer(string linkCode, string callingServerId)
+        {
+            var searchQuery = @"
+MATCH (s:Server)
+WHERE s.linkCode = $linkCode
+RETURN s.id";
+            var session = _driver.AsyncSession();
+            if (!ServerUtilities.IsInServer(callingServerId))
+            {
+                return "error";
+            }
+
+            var id = await session.WriteTransactionAsync(async tx =>
+            {
+                var id = await tx.RunAsync(searchQuery, new {linkCode = linkCode});
+                return await id.ToListAsync();
+            });
+            var serverId = id.First().Values.Values.First().As<string>();
+            if (serverId == callingServerId)
+            {
+                return "error";
+            }
+            await CreateServerLink(serverId, callingServerId);
+
+            return serverId;
         }
 
         public async Task AssignLinkCodeToServerNode(string serverId, string linkCode)
