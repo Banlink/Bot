@@ -36,8 +36,8 @@ namespace Banlink.Commands
             var nodes = await driver.GetAllNodesDirectionallyFromGivenNode(rootNodeId);
             var message = $"Total nodes: {nodes.Count}\n";
             message = nodes.SelectMany(node => node.Values)
-                .Aggregate(message, (current, value) => 
-                    current + ($"{value.Value.As<INode>().Properties.GetValueOrDefault("id")}\n"));
+                .Aggregate(message, (current, value) =>
+                    current + $"{value.Value.As<INode>().Properties.GetValueOrDefault("id")}\n");
 
             await ctx.RespondAsync(message);
         }

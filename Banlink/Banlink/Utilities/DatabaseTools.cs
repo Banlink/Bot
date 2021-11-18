@@ -6,23 +6,24 @@ namespace Banlink.Utilities
     public sealed class DatabaseTools : IDisposable
     {
         private readonly SQLiteConnection _connection;
-        private bool _disposed = false;
+        private bool _disposed;
+
         public DatabaseTools(string location)
         {
             _connection = new SQLiteConnection(location);
         }
-    
+
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-        
+
         ~DatabaseTools()
         {
             Dispose(false);
         }
-        
+
         private void Dispose(bool disposing)
         {
             if (_disposed)

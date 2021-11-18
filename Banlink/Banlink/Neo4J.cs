@@ -35,21 +35,15 @@ MATCH (s:Server)
 WHERE s.linkCode = $linkCode
 RETURN s.id";
             var session = _driver.AsyncSession();
-            if (!ServerUtilities.IsInServer(callingServerId))
-            {
-                return "error";
-            }
+            if (!ServerUtilities.IsInServer(callingServerId)) return "error";
 
             var id = await session.WriteTransactionAsync(async tx =>
             {
-                var id = await tx.RunAsync(searchQuery, new {linkCode = linkCode});
+                var id = await tx.RunAsync(searchQuery, new {linkCode});
                 return await id.ToListAsync();
             });
             var serverId = id.First().Values.Values.First().As<string>();
-            if (serverId == callingServerId)
-            {
-                return "error";
-            }
+            if (serverId == callingServerId) return "error";
             await CreateServerLink(serverId, callingServerId);
 
             return serverId;
@@ -58,16 +52,14 @@ RETURN s.id";
         public async Task AssignLinkCodeToServerNode(string serverId, string linkCode)
         {
             var session = _driver.AsyncSession();
-            if (!ServerUtilities.IsInServer(serverId))
+            if (!ServerUtilities.IsInServer(serverId)) return;
             {
-                return;
-            }
-            {
-                await session.WriteTransactionAsync(tx => tx.RunAsync("MATCH (n:Server {id: $id}) SET n.linkCode = $linkCode", new Dictionary<string, object>
-                {
-                    {"id", serverId},
-                    {"linkCode", linkCode}
-                }));
+                await session.WriteTransactionAsync(tx =>
+                    tx.RunAsync("MATCH (n:Server {id: $id}) SET n.linkCode = $linkCode", new Dictionary<string, object>
+                    {
+                        {"id", serverId},
+                        {"linkCode", linkCode}
+                    }));
             }
         }
 
@@ -98,7 +90,7 @@ DETACH DELETE s";
         {
             const string query = @"MATCH (:Server {id: $serverid1})-[r:LINKED_TO]->(:Server {id: $serverid2})
             DELETE r";
-            
+
             var session = _driver.AsyncSession();
             try
             {

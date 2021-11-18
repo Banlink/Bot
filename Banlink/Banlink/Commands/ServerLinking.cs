@@ -9,12 +9,13 @@ namespace Banlink.Commands
     public class ServerLinking : BaseCommandModule
     {
         private static Neo4J _driver;
+
         public static void GetDriver()
         {
             var config = Configuration.ReadConfig(Banlink.ConfigPath);
             _driver = new Neo4J(config.DbUri, config.Username, config.Password);
         }
-        
+
         [Command("link")]
         [RequirePermissions(Permissions.ManageGuild)]
         [Description("Enter a valid link code to automatically link a server's bans to the current server. " +
@@ -31,20 +32,18 @@ namespace Banlink.Commands
                 await ctx.RespondAsync("Invalid link code.");
                 return;
             }
+
             var id = await _driver.ValidateLinkCodeAndLinkServer(linkCode, ctx.Guild.Id.ToString());
             if (id != "error")
-            {
                 await ctx.RespondAsync($"Successfully linked this server to `{id}`!");
-            }
             else
-            {
                 await ctx.RespondAsync("Invalid link code, or something went wrong!");
-            }
         }
 
         [Command("generate")]
         [RequirePermissions(Permissions.ManageGuild)]
-        [Description("Generates a link code for the current server which you can use with the 'link' command in another server.")]
+        [Description(
+            "Generates a link code for the current server which you can use with the 'link' command in another server.")]
         [Cooldown(1, 10, CooldownBucketType.User)]
         public async Task GenerateLinkCode(CommandContext ctx)
         {
@@ -68,6 +67,7 @@ namespace Banlink.Commands
                 await ctx.RespondAsync("You can't link a server to itself.");
                 return;
             }
+
             if (server1.Length != 18 || server2.Length != 18)
             {
                 await ctx.RespondAsync("Server IDs must be 18 characters long.");
@@ -77,8 +77,9 @@ namespace Banlink.Commands
             if (!ServerUtilities.IsInServer(server1) || !ServerUtilities.IsInServer(server2))
             {
                 await ctx.RespondAsync("One of the given servers does not have the bot added!");
-                return; 
+                return;
             }
+
             await _driver.CreateServerLink(server1, server2);
             await ctx.RespondAsync($"Created link {server1}-[:LINKED_TO]->{server2}");
         }
@@ -94,11 +95,13 @@ namespace Banlink.Commands
                 await ctx.RespondAsync("Server IDs must be 18 characters long.");
                 return;
             }
+
             if (!ServerUtilities.IsInServer(serverId))
             {
                 await ctx.RespondAsync("The given server does not have the bot added!");
                 return;
             }
+
             await _driver.UnlinkServer(serverId, ctx.Guild.Id.ToString());
             await ctx.RespondAsync("Successfully unlinked!");
         }

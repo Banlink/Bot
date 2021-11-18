@@ -15,10 +15,9 @@ namespace Banlink
 {
     internal static class Banlink
     {
-        public static string Time { get; private set; }
-        public static DiscordClient Client;
-
         public const string ConfigPath = "config.toml";
+        public static DiscordClient Client;
+        public static string Time { get; private set; }
 
         private static void Main()
         {
@@ -29,6 +28,7 @@ namespace Banlink
                 Console.WriteLine(Assembly.GetCallingAssembly().Location);
                 Thread.Sleep(60000);
             }
+
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             var config = Configuration.ReadConfig("config.toml");
             MainAsync(config).GetAwaiter().GetResult();
@@ -74,7 +74,7 @@ namespace Banlink
                 Name = $"{config.Prefix}help",
                 ActivityType = ActivityType.Competing
             }, UserStatus.Online);
-            
+
             await Task.Delay(-1);
         }
     }

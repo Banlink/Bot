@@ -11,32 +11,27 @@ namespace Banlink.Handlers
     public static class GuildBansHandler
     {
         public static async Task BanHandler(DiscordClient client, GuildBanAddEventArgs args)
-        { 
+        {
             var bannedMemberId = args.Member.Id;
             var guildId = args.Guild.Id;
-            if (!ServerUtilities.IsInServer(guildId.ToString()))
-            {
-                return; // ignore
-            }
+            if (!ServerUtilities.IsInServer(guildId.ToString())) return; // ignore
             var config = Configuration.ReadConfig(Banlink.ConfigPath);
             var driver = new Neo4J(config.DbUri, config.Username, config.Password);
             var servers = await driver.GetAllNodesDirectionallyFromGivenNode(guildId.ToString());
-            foreach (IRecord server in servers)
-            {
+            foreach (var server in servers)
                 // Realistically this could just be First.
-                foreach (var value in server.Values)
-                {
-                    var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
-                    await BanUserIdFromServer(client, bannedMemberId, serverId, 
-                        $"Banned due to Banlink link with server. " +
-                        $"\nServer name {args.Guild.Name} - ID: {guildId}");
-                }
+            foreach (var value in server.Values)
+            {
+                var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
+                await BanUserIdFromServer(client, bannedMemberId, serverId,
+                    "Banned due to Banlink link with server. " +
+                    $"\nServer name {args.Guild.Name} - ID: {guildId}");
             }
         }
 
         private static async Task BanUserIdFromServer(
-            DiscordClient client, 
-            ulong userId, 
+            DiscordClient client,
+            ulong userId,
             string serverId,
             string reason = null)
         {
@@ -58,24 +53,19 @@ namespace Banlink.Handlers
         {
             var unbannedMemberId = args.Member.Id;
             var guildId = args.Guild.Id;
-            if (!ServerUtilities.IsInServer(guildId.ToString()))
-            {
-                return; // ignore
-            }
+            if (!ServerUtilities.IsInServer(guildId.ToString())) return; // ignore
             var config = Configuration.ReadConfig(Banlink.ConfigPath);
             var driver = new Neo4J(config.DbUri, config.Username, config.Password);
             var servers = await driver.GetAllNodesDirectionallyFromGivenNode(guildId.ToString());
-            foreach (IRecord server in servers)
-            {
+            foreach (var server in servers)
                 // Realistically this could just be First.
-                foreach (var value in server.Values)
-                {
-                    var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
-                    Console.WriteLine(serverId);
-                    await UnbanUserIdFromServer(client, unbannedMemberId, serverId, 
-                        $"Unbanned due to Banlink link with server. " +
-                        $"\nServer name {args.Guild.Name} - ID: {guildId}");
-                }
+            foreach (var value in server.Values)
+            {
+                var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
+                Console.WriteLine(serverId);
+                await UnbanUserIdFromServer(client, unbannedMemberId, serverId,
+                    "Unbanned due to Banlink link with server. " +
+                    $"\nServer name {args.Guild.Name} - ID: {guildId}");
             }
         }
     }
