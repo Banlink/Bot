@@ -19,6 +19,7 @@ namespace Banlink.Commands
         [RequirePermissions(Permissions.ManageGuild)]
         [Description("Enter a valid link code to automatically link a server's bans to the current server. " +
                      "Generate a code with the 'generate' command. This overwrites your previous code, if you had one.")]
+        [Cooldown(1, 10, CooldownBucketType.Guild)]
         public async Task Link(CommandContext ctx, string linkCode)
         {
             // TODO: Check if the link code is valid, if it is, link the bans, if not, tell the user it's invalid.
@@ -44,6 +45,7 @@ namespace Banlink.Commands
         [Command("generate")]
         [RequirePermissions(Permissions.ManageGuild)]
         [Description("Generates a link code for the current server which you can use with the 'link' command in another server.")]
+        [Cooldown(1, 10, CooldownBucketType.User)]
         public async Task GenerateLinkCode(CommandContext ctx)
         {
             /*
@@ -75,7 +77,7 @@ namespace Banlink.Commands
             if (!ServerUtilities.IsInServer(server1) || !ServerUtilities.IsInServer(server2))
             {
                 await ctx.RespondAsync("One of the given servers does not have the bot added!");
-                return;
+                return; 
             }
             await _driver.CreateServerLink(server1, server2);
             await ctx.RespondAsync($"Created link {server1}-[:LINKED_TO]->{server2}");

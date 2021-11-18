@@ -60,7 +60,6 @@ namespace Banlink
 
             // Register the commands
             commands.RegisterCommands<ServerLinking>();
-            commands.RegisterCommands<TestCommands>();
 
             // Login and connect
             await Client.ConnectAsync();
@@ -73,9 +72,9 @@ namespace Banlink
             await Client.UpdateStatusAsync(new DiscordActivity
             {
                 Name = $"{config.Prefix}help",
-                ActivityType = ActivityType.Custom
+                ActivityType = ActivityType.Competing
             }, UserStatus.Online);
-
+            
             await Task.Delay(-1);
         }
     }
