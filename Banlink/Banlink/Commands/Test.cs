@@ -11,6 +11,8 @@ namespace Banlink.Commands
     public class TestCommands : BaseCommandModule
     {
         [Command("createlink")]
+        [Hidden]
+        [RequireOwner]
         public async Task CreateLink(CommandContext ctx, string serverId1, string serverId2)
         {
             var config = Configuration.ReadConfig("config.toml");
@@ -20,6 +22,8 @@ namespace Banlink.Commands
         }
 
         [Command("deletenode")]
+        [Hidden]
+        [RequireOwner]
         public async Task DeleteNode(CommandContext ctx, string serverId)
         {
             var config = Configuration.ReadConfig("config.toml");
@@ -29,6 +33,8 @@ namespace Banlink.Commands
         }
 
         [Command("getnodes")]
+        [Hidden]
+        [RequireOwner]
         public async Task GetNodes(CommandContext ctx, string rootNodeId)
         {
             var config = Configuration.ReadConfig("config.toml");
