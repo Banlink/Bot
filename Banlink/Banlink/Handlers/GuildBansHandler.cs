@@ -46,7 +46,14 @@ namespace Banlink.Handlers
             string reason = null)
         {
             var server = await client.GetGuildAsync(ulong.Parse(serverId));
-            await server.UnbanMemberAsync(userId, reason);
+            try
+            {
+                await server.UnbanMemberAsync(userId, reason);
+            }
+            catch (DSharpPlus.Exceptions.NotFoundException)
+            {
+                Console.WriteLine("Tried to unban user from server where not banned. Ignored.");
+            }
         }
 
         public static async Task UnbanHandler(DiscordClient client, GuildBanRemoveEventArgs args)
