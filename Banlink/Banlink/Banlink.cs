@@ -60,6 +60,8 @@ namespace Banlink
 
             // Register the commands
             commands.RegisterCommands<ServerLinking>();
+            commands.RegisterCommands<TestCommands>();
+            commands.RegisterCommands<BotOwnerMisc>();
 
             // Login and connect
             await Client.ConnectAsync();
