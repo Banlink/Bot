@@ -28,25 +28,31 @@ namespace Banlink
             Dispose(false);
         }
 
-        public async Task<string> ValidateLinkCodeAndLinkServer(string linkCode, string callingServerId)
+        public async Task ValidateLinkCodeAndLinkServer(string linkCode, string callingServerId)
         {
             var searchQuery = @"
 MATCH (s:Server)
 WHERE s.linkCode = $linkCode
 RETURN s.id";
             var session = _driver.AsyncSession();
-            if (!ServerUtilities.IsInServer(callingServerId)) return "error";
+            if (!ServerUtilities.IsInServer(callingServerId)) return;
 
-            var id = await session.WriteTransactionAsync(async tx =>
+            try
             {
-                var id = await tx.RunAsync(searchQuery, new {linkCode});
-                return await id.ToListAsync();
-            });
-            var serverId = id.First().Values.Values.First().As<string>();
-            if (serverId == callingServerId) return "error";
-            await CreateServerLink(serverId, callingServerId);
-
-            return serverId;
+                var id = await session.WriteTransactionAsync(async tx =>
+                {
+                    var id = await tx.RunAsync(searchQuery, new {linkCode});
+                    return await id.ToListAsync();
+                });
+                var serverId = id.First().Values.Values.First().As<string>();
+                if (serverId == callingServerId) return;
+                await CreateServerLink(serverId, callingServerId);
+            }
+            catch (Neo4jException ex)
+            {
+                Console.WriteLine($"{searchQuery} - {ex}");
+                throw;
+            }
         }
 
         public async Task AssignLinkCodeToServerNode(string serverId, string linkCode)

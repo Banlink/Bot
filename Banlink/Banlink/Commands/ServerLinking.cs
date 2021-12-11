@@ -33,11 +33,8 @@ namespace Banlink.Commands
                 return;
             }
 
-            var id = await _driver.ValidateLinkCodeAndLinkServer(linkCode, ctx.Guild.Id.ToString());
-            if (id != "error")
-                await ctx.RespondAsync($"Successfully linked this server to `{id}`!");
-            else
-                await ctx.RespondAsync("Invalid link code, or something went wrong!");
+            await _driver.ValidateLinkCodeAndLinkServer(linkCode, ctx.Guild.Id.ToString());
+            await ctx.RespondAsync($"Successfully linked server!");
         }
 
         [Command("generate")]
