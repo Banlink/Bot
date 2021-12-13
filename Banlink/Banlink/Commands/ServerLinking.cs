@@ -41,7 +41,7 @@ namespace Banlink.Commands
         [RequirePermissions(Permissions.ManageGuild)]
         [Description(
             "Generates a link code for the current server which you can use with the 'link' command in another server.")]
-        [Cooldown(1, 10, CooldownBucketType.User)]
+        [Cooldown(1, 10, CooldownBucketType.Guild)]
         public async Task GenerateLinkCode(CommandContext ctx)
         {
             /*

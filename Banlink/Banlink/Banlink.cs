@@ -49,7 +49,8 @@ namespace Banlink
             var commandConfig = new CommandsNextConfiguration
             {
                 StringPrefixes = new[] {config.Prefix},
-                EnableDms = false
+                EnableDms = false,
+                EnableDefaultHelp = false
             };
 
             // events
@@ -60,6 +61,7 @@ namespace Banlink
 
             // Register the commands
             commands.RegisterCommands<ServerLinking>();
+            commands.RegisterCommands<Misc>();
             commands.RegisterCommands<TestCommands>();
             commands.RegisterCommands<BotOwnerMisc>();
 
