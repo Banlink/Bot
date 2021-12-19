@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Banlink.Utilities;
+using DSharpPlus.Entities;
 using Neo4j.Driver;
 
 namespace Banlink
@@ -50,6 +51,10 @@ RETURN s.id";
             }
             catch (Neo4jException ex)
             {
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                {
+                    Content = $"{searchQuery} - {ex}"
+                });
                 Console.WriteLine($"{searchQuery} - {ex}");
                 throw;
             }

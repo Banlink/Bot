@@ -18,6 +18,7 @@ namespace Banlink
         public const string ConfigPath = "config.toml";
         public static DiscordClient Client;
         public static string Time { get; private set; }
+        public static DiscordWebhookClient Hook;
 
         private static void Main()
         {
@@ -31,6 +32,9 @@ namespace Banlink
 
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             var config = Configuration.ReadConfig("config.toml");
+            Hook = new DiscordWebhookClient();
+            Hook.AddWebhookAsync(ulong.Parse(config.Webhook.Split("|")[0]), 
+                config.Webhook.Split("|")[1]);
             MainAsync(config).GetAwaiter().GetResult();
         }
 
@@ -72,6 +76,13 @@ namespace Banlink
             Logger.Log(Logger.LogLevel.Info, "Bot successfully logged in as " +
                                              $"{Client.CurrentUser.Username}#{Client.CurrentUser.Discriminator}, " +
                                              $"Ping: {Client.Ping}");
+
+
+            await Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
+            {
+                IsTTS = false,
+                Content = $"[{Time}] Bot is running!"
+            });
 
             await Client.UpdateStatusAsync(new DiscordActivity
             {

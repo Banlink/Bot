@@ -19,7 +19,8 @@ namespace Banlink.Utilities
                     DbUri = table["neo4j"]["ConnectionURL"],
                     Username = table["neo4j"]["Username"],
                     Password = table["neo4j"]["Password"],
-                    Token = table["bot"]["Token"]
+                    Token = table["bot"]["Token"],
+                    Webhook = table["logging"]["Webhook"]
                 };
 
                 reader.Close();
@@ -36,11 +37,12 @@ namespace Banlink.Utilities
 
         public struct Config
         {
-            public string Token { get; set; }
-            public string Prefix { get; set; }
-            public string DbUri { get; set; }
-            public string Username { get; set; }
-            public string Password { get; set; }
+            public string Token { get; init; }
+            public string Prefix { get; init; }
+            public string DbUri { get; init; }
+            public string Username { get; init; }
+            public string Password { get; init; }
+            public string Webhook { get; init; }
         }
     }
 }
