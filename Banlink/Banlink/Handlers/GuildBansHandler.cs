@@ -47,7 +47,7 @@ namespace Banlink.Handlers
                 Console.WriteLine($"[UnauthorizedException] Could not ban user {userId} from server {serverId}!");
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"[UnauthorizedException] Could not ban user {userId} from server {serverId}!"
+                    Content = $"[UnauthorizedException] Could not ban user {userId} from server {serverId}!\n{e}"
                 });
             }
             catch (NotFoundException e)
@@ -55,7 +55,7 @@ namespace Banlink.Handlers
                 Console.WriteLine($"[NotFoundException] Could not ban user {userId} from server {serverId}!");
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"[NotFoundException] Could not ban user {userId} from server {serverId}!"
+                    Content = $"[NotFoundException] Could not ban user {userId} from server {serverId}!\n{e}"
                 });
             }
             catch (BadRequestException e)
@@ -63,7 +63,7 @@ namespace Banlink.Handlers
                 Console.WriteLine($"[BadRequestException] Could not ban user {userId} from server {serverId}!");
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"[BadRequestException] Could not ban user {userId} from server {serverId}!"
+                    Content = $"[BadRequestException] Could not ban user {userId} from server {serverId}!\n{e}"
                 });
             }
             catch (ServerErrorException e)
@@ -71,7 +71,7 @@ namespace Banlink.Handlers
                 Console.WriteLine($"[ServerErrorException] Could not ban user {userId} from server {serverId}!");
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"[ServerErrorException] Could not ban user {userId} from server {serverId}!"
+                    Content = $"[ServerErrorException] Could not ban user {userId} from server {serverId}!\n{e}"
                 });
             }
         }
@@ -92,7 +92,7 @@ namespace Banlink.Handlers
                 Console.WriteLine($"[UnauthorizedException] Could not unban user {userId} from server {serverId}!");
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"[UnauthorizedException] Could not unban user {userId} from server {serverId}!"
+                    Content = $"[UnauthorizedException] Could not unban user {userId} from server {serverId}!\n{e}"
                 });
             }
             catch (NotFoundException e)
@@ -100,7 +100,7 @@ namespace Banlink.Handlers
                 Console.WriteLine($"[NotFoundException] Could not unban user {userId} from server {serverId}!");
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"[NotFoundException] Could not unban user {userId} from server {serverId}!"
+                    Content = $"[NotFoundException] Could not unban user {userId} from server {serverId}!\n{e}"
                 });
             }
             catch (BadRequestException e)
@@ -108,7 +108,7 @@ namespace Banlink.Handlers
                 Console.WriteLine($"[BadRequestException] Could not unban user {userId} from server {serverId}!");
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"[BadRequestException] Could not unban user {userId} from server {serverId}!"
+                    Content = $"[BadRequestException] Could not unban user {userId} from server {serverId}!\n{e}"
                 });
             }
             catch (ServerErrorException e)
@@ -116,7 +116,7 @@ namespace Banlink.Handlers
                 Console.WriteLine($"[ServerErrorException] Could not unban user {userId} from server {serverId}!");
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"[ServerErrorException] Could not unban user {userId} from server {serverId}!"
+                    Content = $"[ServerErrorException] Could not unban user {userId} from server {serverId}!\n{e}"
                 });
             }
         }
