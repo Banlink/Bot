@@ -12,6 +12,8 @@ namespace Banlink.Handlers
 {
     public static class GuildBansHandler
     {
+        private static readonly List<string> AlreadyUnbannedFrom = new List<string>();
+
         public static async Task BanHandler(DiscordClient client, GuildBanAddEventArgs args)
         {
             var bannedMemberId = args.Member.Id;
@@ -143,9 +145,13 @@ namespace Banlink.Handlers
                 {
                     var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
                     Console.WriteLine(serverId);
-                    await UnbanUserIdFromServer(client, unbannedMemberId, serverId,
-                        "Unbanned due to Banlink link with server. " +
-                        $"\nServer name: {args.Guild.Name} - ID: {guildId}");
+                    if (!AlreadyUnbannedFrom.Contains($"{serverId}-{unbannedMemberId}"))
+                    {
+                        await UnbanUserIdFromServer(client, unbannedMemberId, serverId,
+                            "Unbanned due to Banlink link with server. " +
+                            $"\nServer name: {args.Guild.Name} - ID: {guildId}");
+                        AlreadyUnbannedFrom.Add($"{serverId}-{unbannedMemberId}");
+                    }
                 }
             }
         }
