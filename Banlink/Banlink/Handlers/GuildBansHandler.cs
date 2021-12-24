@@ -24,10 +24,18 @@ namespace Banlink.Handlers
                 // Realistically this could just be First.
             foreach (var value in server.Values)
             {
-                var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
+                var serverId = value.Value.As<INode>()  // Convert to INode
+                    .Properties.GetValueOrDefault("id").As<string>(); // Get "id" attribute and convert to string
+                var ban = await args.Guild.GetBanAsync(args.Member);
+                var originalBanReason = ban.Reason;
+                if (string.IsNullOrEmpty(originalBanReason))
+                {
+                    originalBanReason = "No reason given.";
+                }
                 await BanUserIdFromServer(client, bannedMemberId, serverId,
                     "Banned due to Banlink link with server. " +
-                    $"\nServer name: {args.Guild.Name} - ID: {guildId}");
+                    $"\nServer Name: {args.Guild.Name} - ID: {guildId}" +
+                    $"\nOriginal ban reason: {originalBanReason}");
             }
         }
 
