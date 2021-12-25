@@ -34,6 +34,15 @@ namespace Banlink.Handlers
                 {
                     originalBanReason = "No reason given.";
                 }
+                
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
+                {
+                    IsTTS = false,
+                    Content = $"Banning user `{bannedMemberId}` - `{args.Member.Username}#{args.Member.Discriminator}` " +
+                              $"from server `{serverId}` - Reason: `{originalBanReason}` " +
+                              $"- Ban origin server: `{args.Guild.Name}` - `{guildId}`"
+                });
+                
                 await BanUserIdFromServer(client, bannedMemberId, serverId,
                     "Banned due to Banlink link with server. " +
                     $"\nServer Name: {args.Guild.Name} - ID: {guildId}" +
@@ -147,6 +156,14 @@ namespace Banlink.Handlers
                     Console.WriteLine(serverId);
                     if (!AlreadyUnbannedFrom.Contains($"{serverId}-{unbannedMemberId}"))
                     {
+                        
+                        await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
+                        {
+                            IsTTS = false,
+                            Content = $"Unbanning user `{unbannedMemberId}` - `{args.Member.Username}#{args.Member.Discriminator}` " +
+                                      $"from server `{serverId}` - Unban origin server: `{args.Guild.Name}` - `{guildId}`"
+                        });
+                        
                         await UnbanUserIdFromServer(client, unbannedMemberId, serverId,
                             "Unbanned due to Banlink link with server. " +
                             $"\nServer name: {args.Guild.Name} - ID: {guildId}");

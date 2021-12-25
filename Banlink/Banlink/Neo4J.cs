@@ -53,10 +53,9 @@ RETURN s.id";
             {
                 await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                 {
-                    Content = $"{searchQuery} - {ex}"
+                    Content = $"[Neo4JException] ![FATAL]! {searchQuery} - {ex}"
                 });
                 Console.WriteLine($"{searchQuery} - {ex}");
-                throw;
             }
         }
 
@@ -65,12 +64,23 @@ RETURN s.id";
             var session = _driver.AsyncSession();
             if (!ServerUtilities.IsInServer(serverId)) return;
             {
-                await session.WriteTransactionAsync(tx =>
-                    tx.RunAsync("MATCH (n:Server {id: $id}) SET n.linkCode = $linkCode", new Dictionary<string, object>
+                try
+                {
+                    await session.WriteTransactionAsync(tx =>
+                        tx.RunAsync("MATCH (n:Server {id: $id}) SET n.linkCode = $linkCode",
+                            new Dictionary<string, object>
+                            {
+                                {"id", serverId},
+                                {"linkCode", linkCode}
+                            }));
+                }
+                catch (Neo4jException ex)
+                {
+                    await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
                     {
-                        {"id", serverId},
-                        {"linkCode", linkCode}
-                    }));
+                        Content = $"[Neo4JException] Error assigning link code! - {ex}\n{serverId} - {linkCode}"
+                    });
+                }
             }
         }
 
@@ -88,8 +98,11 @@ DETACH DELETE s";
             }
             catch (Neo4jException ex)
             {
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                {
+                    Content = $"[Neo4JException] ![FATAL]! {query} - {ex}"
+                });
                 Console.WriteLine($"{query} - {ex}");
-                throw;
             }
             finally
             {
@@ -112,8 +125,11 @@ DETACH DELETE s";
             }
             catch (Neo4jException ex)
             {
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                {
+                    Content = $"[Neo4JException] ![FATAL]! {query} - {ex}"
+                });
                 Console.WriteLine($"{query} - {ex}");
-                throw;
             }
             finally
             {
@@ -140,6 +156,10 @@ return node";
             }
             catch (Neo4jException ex)
             {
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                {
+                    Content = $"[Neo4JException] {query} - {ex}"
+                });
                 Console.WriteLine($"{query} - {ex}");
                 throw;
             }
@@ -172,6 +192,10 @@ return node";
             // Capture any errors along with the query and data for traceability
             catch (Neo4jException ex)
             {
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                {
+                    Content = $"[Neo4JException] {query} - {ex}"
+                });
                 Console.WriteLine($"{query} - {ex}");
                 Logger.Log(Logger.LogLevel.Fatal, $"Fatal error while creating link!\n{query}\n{ex}");
             }
