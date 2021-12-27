@@ -13,6 +13,7 @@ namespace Banlink.Handlers
     public static class GuildBansHandler
     {
         private static readonly List<string> AlreadyUnbannedFrom = new List<string>();
+        private static readonly List<string> AlreadyBannedFrom = new List<string>();
 
         public static async Task BanHandler(DiscordClient client, GuildBanAddEventArgs args)
         {
@@ -26,7 +27,7 @@ namespace Banlink.Handlers
                 // Realistically this could just be First.
             foreach (var value in server.Values)
             {
-                var serverId = value.Value.As<INode>()  // Convert to INode
+                var serverId = value.Value.As<INode>() // Convert to INode
                     .Properties.GetValueOrDefault("id").As<string>(); // Get "id" attribute and convert to string
                 var ban = await args.Guild.GetBanAsync(args.Member);
                 var originalBanReason = ban.Reason;
@@ -34,19 +35,24 @@ namespace Banlink.Handlers
                 {
                     originalBanReason = "No reason given.";
                 }
-                
-                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
+
+                if (!AlreadyBannedFrom.Contains($"{serverId}-{bannedMemberId}"))
                 {
-                    IsTTS = false,
-                    Content = $"Banning user `{bannedMemberId}` - `{args.Member.Username}#{args.Member.Discriminator}` " +
-                              $"from server `{serverId}` - Reason: `{originalBanReason}` " +
-                              $"- Ban origin server: `{args.Guild.Name}` - `{guildId}`"
-                });
-                
-                await BanUserIdFromServer(client, bannedMemberId, serverId,
-                    "Banned due to Banlink link with server. " +
-                    $"\nServer Name: {args.Guild.Name} - ID: {guildId}" +
-                    $"\nOriginal ban reason: {originalBanReason}");
+                    await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
+                    {
+                        IsTTS = false,
+                        Content =
+                            $"Banning user `{bannedMemberId}` - `{args.Member.Username}#{args.Member.Discriminator}` " +
+                            $"from server `{serverId}` - Reason: `{originalBanReason}` " +
+                            $"- Ban origin server: `{args.Guild.Name}` - `{guildId}`"
+                    });
+
+                    await BanUserIdFromServer(client, bannedMemberId, serverId,
+                        "Banned due to Banlink link with server. " +
+                        $"\nServer Name: {args.Guild.Name} - ID: {guildId}" +
+                        $"\nOriginal ban reason: {originalBanReason}");
+                    AlreadyBannedFrom.Add($"{serverId}-{bannedMemberId}");
+                }
             }
         }
 
