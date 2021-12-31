@@ -13,7 +13,7 @@ namespace Banlink.Handlers
     public static class GuildBansHandler
     {
         private static readonly List<string> AlreadyUnbannedFrom = new List<string>();
-        private static readonly List<string> AlreadyBannedFrom = new List<string>();
+        public static readonly List<string> AlreadyBannedFrom = new List<string>();
 
         public static async Task BanHandler(DiscordClient client, GuildBanAddEventArgs args)
         {
@@ -56,7 +56,7 @@ namespace Banlink.Handlers
             }
         }
 
-        private static async Task BanUserIdFromServer(
+        public static async Task BanUserIdFromServer(
             DiscordClient client,
             ulong userId,
             string serverId,
@@ -162,7 +162,6 @@ namespace Banlink.Handlers
                     Console.WriteLine(serverId);
                     if (!AlreadyUnbannedFrom.Contains($"{serverId}-{unbannedMemberId}"))
                     {
-                        
                         await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                         {
                             IsTTS = false,
