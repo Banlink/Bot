@@ -15,7 +15,7 @@ namespace Banlink.Commands
         [Command("guildcount")]
         [Hidden]
         [RequireOwner]
-        public async Task guildcount(CommandContext ctx)
+        public async Task Guildcount(CommandContext ctx)
         {
             var guilds = ctx.Client.Guilds.Count;
             await ctx.RespondAsync($"The bot is in {guilds} servers!");
@@ -24,7 +24,7 @@ namespace Banlink.Commands
         [Command("membercount")]
         [Hidden]
         [RequireOwner]
-        public async Task membercount(CommandContext ctx)
+        public async Task Membercount(CommandContext ctx)
         {
             var memberCount = ctx.Client.Guilds.Values.Sum(server => server.MemberCount);
 
@@ -34,7 +34,7 @@ namespace Banlink.Commands
         [Command("banfrom")]
         [Hidden]
         [RequireOwner]
-        public async Task banfrom(CommandContext ctx, string userId, string serverID, string reason)
+        public async Task Banfrom(CommandContext ctx, string userId, string serverID, [RemainingText] string reason)
         {
             await ctx.TriggerTypingAsync();
 
