@@ -31,6 +31,35 @@ namespace Banlink.Commands
             await ctx.RespondAsync($"The bot is serving {memberCount} members!");
         }
 
+        private static int GuildComparer(KeyValuePair<ulong, DiscordGuild> g1, KeyValuePair<ulong, DiscordGuild> g2)
+        {
+            if (g1.Value.MemberCount > g2.Value.MemberCount)
+            {
+                return -1;
+            }
+            return 1;
+        }
+        
+        [Command("serverlist")]
+        [Hidden]
+        [RequireOwner]
+        public async Task Serverlist(CommandContext ctx)
+        {
+            await ctx.TriggerTypingAsync();
+            var list = ctx.Client.Guilds.ToList();
+            list.Sort(GuildComparer);
+            string message = "";
+            int total = 0;
+            foreach (var guild in list)
+            {
+                message += $"{guild.Value.Name} - {guild.Value.Id} : {guild.Value.MemberCount}\n";
+                total += guild.Value.MemberCount;
+            }
+
+            message += $"\nTotal members: {total}";
+            await ctx.RespondAsync(message);
+        }
+
         [Command("banfrom")]
         [Hidden]
         [RequireOwner]
