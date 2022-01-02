@@ -76,10 +76,15 @@ namespace Banlink
             
             if (!string.IsNullOrEmpty(config.UptimeKuma))
             {
+                Console.WriteLine("Detected kuma URL. Activating uptime logging!");
                 var timer = new System.Timers.Timer(30000);
                 timer.Elapsed += Uptime.ContactUptimeKuma;
                 timer.AutoReset = true;
                 timer.Enabled = true; 
+            }
+            else
+            {
+                Console.WriteLine("No kuma url!");
             }
             
             // Login and connect
