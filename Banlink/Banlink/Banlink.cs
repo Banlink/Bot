@@ -9,6 +9,7 @@ using Banlink.Utilities;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
+using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
 
 namespace Banlink
@@ -31,10 +32,11 @@ namespace Banlink
             }
 
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-            var config = Configuration.ReadConfig("config.toml");
+            var config = Configuration.ReadConfig(ConfigPath);
             Hook = new DiscordWebhookClient();
             Hook.AddWebhookAsync(ulong.Parse(config.Webhook.Split("|")[0]), 
                 config.Webhook.Split("|")[1]);
+
             MainAsync(config).GetAwaiter().GetResult();
         }
 
@@ -60,6 +62,9 @@ namespace Banlink
             // events
             Client.GuildBanAdded += GuildBansHandler.BanHandler;
             Client.GuildBanRemoved += GuildBansHandler.UnbanHandler;
+            
+            Client.GuildCreated += ClientOnGuildCreated;
+            Client.GuildDeleted += ClientOnGuildDeleted;
 
             var commands = Client.UseCommandsNext(commandConfig);
 
@@ -68,7 +73,15 @@ namespace Banlink
             commands.RegisterCommands<Misc>();
             commands.RegisterCommands<TestCommands>();
             commands.RegisterCommands<BotOwnerMisc>();
-
+            
+            if (!string.IsNullOrEmpty(config.UptimeKuma))
+            {
+                var timer = new System.Timers.Timer(30000);
+                timer.Elapsed += Uptime.ContactUptimeKuma;
+                timer.AutoReset = true;
+                timer.Enabled = true; 
+            }
+            
             // Login and connect
             await Client.ConnectAsync();
             await Task.Delay(2000); // short delay for it connect or it gets mad
@@ -91,6 +104,26 @@ namespace Banlink
             }, UserStatus.Online);
 
             await Task.Delay(-1);
+        }
+
+        private static async Task ClientOnGuildDeleted(DiscordClient sender, GuildDeleteEventArgs e)
+        {
+            await Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
+            {
+                IsTTS = false,
+                Content = $"[{Time}] Bot was removed from a server!" +
+                          $"\n{e.Guild.Name} - {e.Guild.Id}"
+            });
+        }
+
+        private static async Task ClientOnGuildCreated(DiscordClient sender, GuildCreateEventArgs e)
+        {
+            await Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
+            {
+                IsTTS = false,
+                Content = $"[{Time}] Bot was added to new server!" +
+                          $"\n{e.Guild.Name} - {e.Guild.Id} - {e.Guild.MemberCount} members!"
+            });
         }
     }
 }

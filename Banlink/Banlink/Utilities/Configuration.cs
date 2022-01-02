@@ -20,7 +20,8 @@ namespace Banlink.Utilities
                     Username = table["neo4j"]["Username"],
                     Password = table["neo4j"]["Password"],
                     Token = table["bot"]["Token"],
-                    Webhook = table["logging"]["Webhook"]
+                    Webhook = table["logging"]["Webhook"],
+                    UptimeKuma = table["logging"]["UptimeKuma"]
                 };
 
                 reader.Close();
@@ -43,6 +44,7 @@ namespace Banlink.Utilities
             public string Username { get; init; }
             public string Password { get; init; }
             public string Webhook { get; init; }
+            public string UptimeKuma { get; set; }
         }
     }
 }
