@@ -51,7 +51,7 @@ RETURN s.id";
             }
             catch (Neo4jException ex)
             {
-                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                 {
                     Content = $"[Neo4JException] ![FATAL]! {searchQuery} - {ex}"
                 });
@@ -76,7 +76,7 @@ RETURN s.id";
                 }
                 catch (Neo4jException ex)
                 {
-                    await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                    await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                     {
                         Content = $"[Neo4JException] Error assigning link code! - {ex}\n{serverId} - {linkCode}"
                     });
@@ -98,7 +98,7 @@ DETACH DELETE s";
             }
             catch (Neo4jException ex)
             {
-                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                 {
                     Content = $"[Neo4JException] ![FATAL]! {query} - {ex}"
                 });
@@ -125,7 +125,7 @@ DETACH DELETE s";
             }
             catch (Neo4jException ex)
             {
-                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                 {
                     Content = $"[Neo4JException] ![FATAL]! {query} - {ex}"
                 });
@@ -156,7 +156,7 @@ return node";
             }
             catch (Neo4jException ex)
             {
-                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                 {
                     Content = $"[Neo4JException] {query} - {ex}"
                 });
@@ -192,7 +192,7 @@ return node";
             // Capture any errors along with the query and data for traceability
             catch (Neo4jException ex)
             {
-                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder()
+                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                 {
                     Content = $"[Neo4JException] {query} - {ex}"
                 });

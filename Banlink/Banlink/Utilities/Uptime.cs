@@ -1,13 +1,11 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Net.Http;
 using System.Timers;
 
 namespace Banlink.Utilities
 {
     public class Uptime
     {
-        public static void ContactUptimeKuma(Object source, ElapsedEventArgs e)
+        public static void ContactUptimeKuma(object source, ElapsedEventArgs e)
         {
             var config = Configuration.ReadConfig(Banlink.ConfigPath);
             var kumaUrl = config.UptimeKuma;

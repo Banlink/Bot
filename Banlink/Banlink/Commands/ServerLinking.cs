@@ -34,7 +34,7 @@ namespace Banlink.Commands
             }
 
             await _driver.ValidateLinkCodeAndLinkServer(linkCode, ctx.Guild.Id.ToString());
-            await ctx.RespondAsync($"Successfully linked server!");
+            await ctx.RespondAsync("Successfully linked server!");
         }
 
         [Command("generate")]

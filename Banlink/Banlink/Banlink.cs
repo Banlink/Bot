@@ -11,6 +11,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.Entities;
 using DSharpPlus.EventArgs;
 using Microsoft.Extensions.Logging;
+using Timer = System.Timers.Timer;
 
 namespace Banlink
 {
@@ -18,8 +19,8 @@ namespace Banlink
     {
         public const string ConfigPath = "config.toml";
         public static DiscordClient Client;
-        public static string Time { get; private set; }
         public static DiscordWebhookClient Hook;
+        public static string Time { get; private set; }
 
         private static void Main()
         {
@@ -34,7 +35,7 @@ namespace Banlink
             Time = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             var config = Configuration.ReadConfig(ConfigPath);
             Hook = new DiscordWebhookClient();
-            Hook.AddWebhookAsync(ulong.Parse(config.Webhook.Split("|")[0]), 
+            Hook.AddWebhookAsync(ulong.Parse(config.Webhook.Split("|")[0]),
                 config.Webhook.Split("|")[1]);
 
             MainAsync(config).GetAwaiter().GetResult();
@@ -62,7 +63,7 @@ namespace Banlink
             // events
             Client.GuildBanAdded += GuildBansHandler.BanHandler;
             Client.GuildBanRemoved += GuildBansHandler.UnbanHandler;
-            
+
             Client.GuildCreated += ClientOnGuildCreated;
             Client.GuildDeleted += ClientOnGuildDeleted;
 
@@ -73,20 +74,20 @@ namespace Banlink
             commands.RegisterCommands<Misc>();
             commands.RegisterCommands<TestCommands>();
             commands.RegisterCommands<BotOwnerMisc>();
-            
+
             if (!string.IsNullOrEmpty(config.UptimeKuma))
             {
                 Console.WriteLine("Detected kuma URL. Activating uptime logging!");
-                var timer = new System.Timers.Timer(30000);
+                var timer = new Timer(30000);
                 timer.Elapsed += Uptime.ContactUptimeKuma;
                 timer.AutoReset = true;
-                timer.Enabled = true; 
+                timer.Enabled = true;
             }
             else
             {
                 Console.WriteLine("No kuma url!");
             }
-            
+
             // Login and connect
             await Client.ConnectAsync();
             await Task.Delay(2000); // short delay for it connect or it gets mad

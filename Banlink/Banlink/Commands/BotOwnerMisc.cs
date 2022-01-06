@@ -33,13 +33,10 @@ namespace Banlink.Commands
 
         private static int GuildComparer(KeyValuePair<ulong, DiscordGuild> g1, KeyValuePair<ulong, DiscordGuild> g2)
         {
-            if (g1.Value.MemberCount > g2.Value.MemberCount)
-            {
-                return -1;
-            }
+            if (g1.Value.MemberCount > g2.Value.MemberCount) return -1;
             return 1;
         }
-        
+
         [Command("serverlist")]
         [Hidden]
         [RequireOwner]
@@ -48,8 +45,8 @@ namespace Banlink.Commands
             await ctx.TriggerTypingAsync();
             var list = ctx.Client.Guilds.ToList();
             list.Sort(GuildComparer);
-            string message = "";
-            int total = 0;
+            var message = "";
+            var total = 0;
             foreach (var guild in list)
             {
                 message += $"{guild.Value.Name} - {guild.Value.Id} : {guild.Value.MemberCount}\n";
@@ -69,10 +66,10 @@ namespace Banlink.Commands
 
             var bannedMemberId = userId;
             var guildId = serverID;
-            if (!ServerUtilities.IsInServer(guildId.ToString())) return; // ignore
+            if (!ServerUtilities.IsInServer(guildId)) return; // ignore
             var config = Configuration.ReadConfig(Banlink.ConfigPath);
             var driver = new Neo4J(config.DbUri, config.Username, config.Password);
-            var servers = await driver.GetAllNodesDirectionallyFromGivenNode(guildId.ToString());
+            var servers = await driver.GetAllNodesDirectionallyFromGivenNode(guildId);
             foreach (var server in servers)
                 // Realistically this could just be First.
             foreach (var value in server.Values)
@@ -80,10 +77,7 @@ namespace Banlink.Commands
                 var serverId = value.Value.As<INode>() // Convert to INode
                     .Properties.GetValueOrDefault("id").As<string>(); // Get "id" attribute and convert to string
                 var originalBanReason = reason;
-                if (string.IsNullOrEmpty(originalBanReason))
-                {
-                    originalBanReason = "No reason given.";
-                }
+                if (string.IsNullOrEmpty(originalBanReason)) originalBanReason = "No reason given.";
 
                 if (!GuildBansHandler.AlreadyBannedFrom.Contains($"{serverId}-{bannedMemberId}"))
                 {
@@ -94,7 +88,7 @@ namespace Banlink.Commands
                         Content =
                             $"Banning user `{bannedMemberId}`" +
                             $"from server `{serverId}` - `{guild.Name}` - Reason: `{originalBanReason}` " +
-                            $"- Manually initiated"
+                            "- Manually initiated"
                     });
 
                     await GuildBansHandler.BanUserIdFromServer(ctx.Client, ulong.Parse(bannedMemberId), serverId,
