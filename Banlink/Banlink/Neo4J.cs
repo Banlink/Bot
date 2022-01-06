@@ -18,6 +18,14 @@ namespace Banlink
             _driver = GraphDatabase.Driver(uri, AuthTokens.Basic(user, password));
         }
 
+        private static async Task ReportError(string query, string ex)
+        {
+            await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
+            {
+                Content = $"[Neo4JException] ![FATAL]! {query} - {ex}"
+            });
+        }
+
         public void Dispose()
         {
             Dispose(true);
@@ -98,11 +106,7 @@ DETACH DELETE s";
             }
             catch (Neo4jException ex)
             {
-                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
-                {
-                    Content = $"[Neo4JException] ![FATAL]! {query} - {ex}"
-                });
-                Console.WriteLine($"{query} - {ex}");
+                await ReportError(query, ex.ToString());
             }
             finally
             {
@@ -123,13 +127,9 @@ DETACH DELETE s";
                     await tx.RunAsync(query, new {serverid1 = serverId1, serverid2});
                 });
             }
-            catch (Neo4jException ex)
+            catch (Neo4jException exception)
             {
-                await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
-                {
-                    Content = $"[Neo4JException] ![FATAL]! {query} - {ex}"
-                });
-                Console.WriteLine($"{query} - {ex}");
+                await ReportError(query, exception.ToString());
             }
             finally
             {
