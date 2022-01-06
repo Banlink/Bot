@@ -38,19 +38,21 @@ namespace Banlink.Handlers
 
                 if (!AlreadyBannedFrom.Contains($"{serverId}-{bannedMemberId}"))
                 {
+                    var guild = await client.GetGuildAsync(ulong.Parse(serverId));
                     await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                     {
                         IsTTS = false,
                         Content =
                             $"Banning user `{bannedMemberId}` - `{args.Member.Username}#{args.Member.Discriminator}` " +
-                            $"from server `{serverId}` - Reason: `{originalBanReason}` " +
+                            $"from server `{serverId}` - `{guild.Name}` - Reason: `{originalBanReason}` " +
                             $"- Ban origin server: `{args.Guild.Name}` - `{guildId}`"
                     });
 
                     await BanUserIdFromServer(client, bannedMemberId, serverId,
                         "Banned due to Banlink link with server. " +
                         $"\nServer Name: {args.Guild.Name} - ID: {guildId}" +
-                        $"\nOriginal ban reason: {originalBanReason}");
+                        $"\nOriginal ban reason: {originalBanReason}",
+                        guild);
                     AlreadyBannedFrom.Add($"{serverId}-{bannedMemberId}");
                 }
             }
@@ -60,11 +62,19 @@ namespace Banlink.Handlers
             DiscordClient client,
             ulong userId,
             string serverId,
-            string reason = null)
+            string reason,
+            DiscordGuild server)
         {
             try
             {
-                var server = await client.GetGuildAsync(ulong.Parse(serverId));
+                if (string.IsNullOrEmpty(reason))
+                {
+                    reason = "No reason! This is a bug! Please tell Whanos#0621!";
+                }
+                // 512 is max length for ban reasons.
+                if (reason.Length > 512) {
+                    reason = reason.Substring(0, 512);
+                }
                 await server.BanMemberAsync(userId, 0, reason);
             }
             catch (UnauthorizedException e)
@@ -105,11 +115,11 @@ namespace Banlink.Handlers
             DiscordClient client,
             ulong userId,
             string serverId,
-            string reason = null)
+            string reason,
+            DiscordGuild server)
         {
             try
             {
-                var server = await client.GetGuildAsync(ulong.Parse(serverId));
                 await server.UnbanMemberAsync(userId, reason);
             }
             catch (UnauthorizedException e)
@@ -159,19 +169,19 @@ namespace Banlink.Handlers
                 foreach (var value in server.Values)
                 {
                     var serverId = value.Value.As<INode>().Properties.GetValueOrDefault("id").As<string>();
-                    Console.WriteLine(serverId);
                     if (!AlreadyUnbannedFrom.Contains($"{serverId}-{unbannedMemberId}"))
                     {
+                        var guild = await client.GetGuildAsync(ulong.Parse(serverId));
                         await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                         {
                             IsTTS = false,
                             Content = $"Unbanning user `{unbannedMemberId}` - `{args.Member.Username}#{args.Member.Discriminator}` " +
-                                      $"from server `{serverId}` - Unban origin server: `{args.Guild.Name}` - `{guildId}`"
+                                      $"from server `{serverId}` - `{guild.Name}` - Unban origin server: `{args.Guild.Name}` - `{guildId}`"
                         });
-                        
                         await UnbanUserIdFromServer(client, unbannedMemberId, serverId,
                             "Unbanned due to Banlink link with server. " +
-                            $"\nServer name: {args.Guild.Name} - ID: {guildId}");
+                            $"\nServer name: {args.Guild.Name} - ID: {guildId}",
+                            guild);
                         AlreadyUnbannedFrom.Add($"{serverId}-{unbannedMemberId}");
                     }
                 }

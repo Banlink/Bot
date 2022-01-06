@@ -63,7 +63,7 @@ namespace Banlink.Commands
         [Command("banfrom")]
         [Hidden]
         [RequireOwner]
-        public async Task Banfrom(CommandContext ctx, string userId, string serverID, [RemainingText] string reason)
+        public async Task Banfrom(CommandContext ctx, string serverID, string userId, [RemainingText] string reason)
         {
             await ctx.TriggerTypingAsync();
 
@@ -87,17 +87,19 @@ namespace Banlink.Commands
 
                 if (!GuildBansHandler.AlreadyBannedFrom.Contains($"{serverId}-{bannedMemberId}"))
                 {
+                    var guild = await Banlink.Client.GetGuildAsync(ulong.Parse(serverId));
                     await Banlink.Hook.BroadcastMessageAsync(new DiscordWebhookBuilder
                     {
                         IsTTS = false,
                         Content =
                             $"Banning user `{bannedMemberId}`" +
-                            $"from server `{serverId}` - Reason: `{originalBanReason}` " +
+                            $"from server `{serverId}` - `{guild.Name}` - Reason: `{originalBanReason}` " +
                             $"- Manually initiated"
                     });
 
                     await GuildBansHandler.BanUserIdFromServer(ctx.Client, ulong.Parse(bannedMemberId), serverId,
-                        $"Manually initiated ban.\nOriginal ban reason: {originalBanReason}");
+                        $"Manually initiated ban.\nBan reason: {originalBanReason}",
+                        guild);
                     GuildBansHandler.AlreadyBannedFrom.Add($"{serverId}-{bannedMemberId}");
                 }
             }
