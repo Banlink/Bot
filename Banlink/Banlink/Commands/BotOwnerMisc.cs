@@ -96,6 +96,10 @@ namespace Banlink.Commands
                         guild);
                     GuildBansHandler.AlreadyBannedFrom.Add($"{serverId}-{bannedMemberId}");
                 }
+                else
+                {
+                    await ctx.RespondAsync($"User `{bannedMemberId}` is already banned from `{serverId}`");
+                }
             }
         }
     }
