@@ -6,3 +6,7 @@ Password = "db password"
 [bot]
 Prefix = "bot prefix"
 Token = "bot token"
+
+[logging]
+Webhook = "ID|TOKEN"
+UptimeKuma = "Uptime kuma for uptime. Leave empty to disable."
