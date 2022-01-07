@@ -8,6 +8,7 @@ using Neo4j.Driver;
 
 namespace Banlink.Commands
 {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class TestCommands : BaseCommandModule
     {
         [Command("createlink")]
