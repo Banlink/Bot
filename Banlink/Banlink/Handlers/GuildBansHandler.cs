@@ -29,16 +29,20 @@ namespace Banlink.Handlers
             var guildId = args.Guild.Id;
             if (!ServerUtilities.IsInServer(guildId.ToString())) return; // ignore
             var servers = await GetServers(guildId.ToString());
+            var ban = await args.Guild.GetBanAsync(args.Member);
+            var originalBanReason = ban.Reason;
+            if (originalBanReason.Contains("NO_BANLINK")) // Don't broadcast bans.
+            {
+                return;
+            }
+            
             foreach (var server in servers)
                 // Realistically this could just be First.
             foreach (var value in server.Values)
             {
                 var serverId = value.Value.As<INode>() // Convert to INode
                     .Properties.GetValueOrDefault("id").As<string>(); // Get "id" attribute and convert to string
-                var ban = await args.Guild.GetBanAsync(args.Member);
-                var originalBanReason = ban.Reason;
                 if (string.IsNullOrEmpty(originalBanReason)) originalBanReason = "No reason given.";
-
                 if (!AlreadyBannedFrom.Contains($"{serverId}-{bannedMemberId}"))
                 {
                     var guild = await client.GetGuildAsync(ulong.Parse(serverId));
