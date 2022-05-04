@@ -61,6 +61,14 @@ namespace Banlink.Handlers
                         $"\nOriginal ban reason: {originalBanReason}",
                         guild);
                     AlreadyBannedFrom.Add($"{serverId}-{bannedMemberId}");
+                    try
+                    {
+                        AlreadyUnbannedFrom.Remove($"{serverId}-{bannedMemberId}");
+                    }
+                    catch
+                    {
+                        // We can ignore this.
+                    }
                 }
             }
         }
@@ -184,6 +192,14 @@ namespace Banlink.Handlers
                         $"\nServer name: {args.Guild.Name} - ID: {guildId}",
                         guild);
                     AlreadyUnbannedFrom.Add($"{serverId}-{unbannedMemberId}");
+                    try
+                    {
+                        AlreadyBannedFrom.Remove($"{serverId}-{unbannedMemberId}");
+                    }
+                    catch
+                    {
+                        // Ignore
+                    }
                 }
             }
         }
