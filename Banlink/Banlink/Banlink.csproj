@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <None Include="bin\Debug\net5.0\config.toml" />
         <None Include="bin\Release\net5.0\config.toml" />
     </ItemGroup>
 
